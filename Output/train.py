@@ -29,7 +29,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     this_dir = os.path.dirname(__file__)
     os.chdir(this_dir)
-    model = YOLO(os.path.join(this_dir, "yolov8s.pt"))
+    model = YOLO('yolov8s.pt')
     results = model.train(
         data=os.path.join(this_dir, "yolo_params.yaml"), 
         epochs=args.epochs,
