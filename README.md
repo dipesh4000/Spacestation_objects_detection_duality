@@ -1,60 +1,88 @@
-# Spacestation Objects Detection - Duality
+# Multiple Object Detection using YOLOv8 and Synthetic Data
 
-A YOLOv8-based object detection model trained on synthetic data generated using Duality's FalconEditor simulation software, tested on real-world images.
+This repository trains and evaluates a YOLOv8 object detection model using synthetic data and validates it on real-world images. The primary execution path is the Colab notebook `syntheticDataWorks_multiclass.ipynb`.
 
-## Overview
+## What this project does
 
-This project demonstrates how synthetic data from a simulated space station environment can be used to train an object detection model that works on real-world images.
+- Trains YOLOv8 on synthetic training images under `Output/train`
+- Validates using `Output/val`
+- Tests the model on real-world images under `testImages`
+- Saves annotated predictions to `Output/predictions`
+- Generates a summary report using `report/report.py`
 
-## Dataset
-
-The training dataset is hosted on Google Drive. It will be automatically accessed when running the notebook in Google Colab.
-
-## Run Instructions
+## How to run
 
 1. Open `syntheticDataWorks_multiclass.ipynb` in [Google Colab](https://colab.research.google.com/)
-2. Run all cells top to bottom
+2. Mount Google Drive when prompted
+3. Enable GPU: `Edit > Notebook settings > Hardware accelerator > GPU`
+4. Run all notebook cells from top to bottom
 
-> Make sure to enable GPU: `Edit > Notebook settings > Hardware Accelerator > T4 GPU`
+## Important notebook behavior
 
-## Notebook Features
+The notebook is designed to:
 
-### Training
-Trains a YOLOv8 model on the synthetic dataset (~20-30 mins). Outputs final metrics in this format:
+- mount the signed-in user’s Google Drive
+- locate the shared source dataset folder under `MyDrive`
+- copy the source project into the user's own Drive folder at `MyDrive/syntheticDataWorks_multiclass`
+- then proceed with training, prediction, and report generation
+
+### Current path setting
+
+If your Drive folder contains the shared project under `MyDrive/Multiple_object_detection`, the notebook should use:
+
+```python
+SOURCE_PROJECT_ROOT = DRIVE_ROOT / 'Multiple_object_detection'
 ```
-Class     Images  Instances    Box(P       R     mAP50  mAP50-95)
-  all        138        136    0.978   0.993     0.993      0.980
-```
 
-### Training Metrics & Graphs
-After training, the notebook displays `results.png` showing:
-- Loss curves (should trend downward)
-- Precision & Recall curves (should trend upward)
-- mAP50 curve (should trend upward)
+If the source folder path changes, update that line before running.
 
-### Prediction on Real-World Images
-Runs `predict.py` to test the trained model on real-world test images. Outputs annotated prediction images and displays a grid of results directly in the notebook.
+## What each script does
 
-### Report Generation
-Runs `report/report.py` to generate a final summary report of the model's performance saved to `report/generatedreport.d`.
+### `Output/train.py`
+- Loads the YOLOv8 model from `Output/yolov8s.pt`
+- Uses dataset configuration from `Output/yolo_params.yaml`
+- Trains the model and saves results to `Output/runs/detect/train`
 
-### Camera Distance Analysis
-Runs `camera_distance_analysis.py` which compares the synthetic training data and real-world test images by analyzing the relative bounding box size of detected objects. Outputs:
-- Height and width comparison graphs per class
-- Recommended camera distance adjustments to improve future synthetic data generation
+### `Output/predict.py`
+- Loads the best model from the latest training run
+- Predicts on images defined by the `test` field in `Output/yolo_params.yaml`
+- Saves annotated prediction images to `Output/predictions/images`
+- Saves prediction labels to `Output/predictions/labels`
 
-## Project Structure
+### `report/report.py`
+- Reads training and validation metrics from `Output/runs/detect`
+- Copies example prediction images
+- Generates `report/generatedreport.md`
+
+## Outputs
+
+- `Output/runs/detect/train` — training results and metrics
+- `Output/predictions/images` — annotated real-world predictions
+- `Output/predictions/labels` — predicted label files
+- `report/generatedreport.md` — report summary
+
+## Project structure
 
 ```
 ├── Output/
-│   ├── train/labels/
-│   ├── val/labels/
 │   ├── classes.txt
-│   ├── train.py
 │   ├── predict.py
+│   ├── train.py
 │   ├── visualize.py
-│   └── yolo_params.yaml
-├── testImages/labels/
-├── report/report.py
+│   ├── yolo_params.yaml
+│   ├── train/
+│   ├── val/
+│   └── runs/
+├── report/
+│   └── report.py
+├── testImages/
+│   ├── images/
+│   └── labels/
 └── syntheticDataWorks_multiclass.ipynb
 ```
+
+## Notes
+
+- The notebook assumes the shared folder is accessible from the signed-in Google account.
+- If the path is wrong, update `SOURCE_PROJECT_ROOT` in the notebook.
+- The notebook no longer depends on a GitHub clone and uses local Drive storage instead.
