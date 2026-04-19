@@ -61,6 +61,20 @@ If the source folder path changes, update that line before running.
 - `Output/predictions/labels` — predicted label files
 - `report/generatedreport.md` — report summary
 
+## Technical Assets
+
+- **Runs**: Training and validation runs stored in `Output/runs/detect/`
+- **Training Logs**: Metrics and loss curves in CSV and text formats within run directories
+- **README Files**: This README.md and generated report in `report/`
+- **Codes**: 
+  - `syntheticDataWorks_multiclass.ipynb` — Main Colab notebook
+  - `Output/train.py` — Training script
+  - `Output/predict.py` — Prediction script
+  - `Output/visualize.py` — Visualization utilities
+  - `report/report.py` — Report generation script
+- **Configuration**: `Output/yolo_params.yaml` — Dataset and model parameters
+- **Datasets**: Synthetic training/validation data and real-world test images with labels
+
 ## Project structure
 
 ```
